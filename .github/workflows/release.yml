@@ -36,8 +36,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            main.js
-            manifest.json
             weekly-notes.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
