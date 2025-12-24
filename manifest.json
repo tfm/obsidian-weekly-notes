@@ -1,0 +1,10 @@
+{
+    "id": "weekly-notes",
+    "name": "Weekly Notes",
+    "version": "1.0.0",
+    "minAppVersion": "0.15.0",
+    "description": "Create weekly notes based on a template.",
+    "author": "Antigravity",
+    "authorUrl": "https://github.com/obsidianmd/obsidian-sample-plugin",
+    "isDesktopOnly": false
+}
