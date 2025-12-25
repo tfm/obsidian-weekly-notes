@@ -34,6 +34,12 @@ export default class WeeklyNotesPlugin extends Plugin {
             callback: () => this.openWeeklyNote(),
         });
 
+        this.addCommand({
+            id: 'open-next-weekly-note',
+            name: 'Open Next Week\'s Note',
+            callback: () => this.openNextWeeklyNote(),
+        });
+
         this.registerEvent(
             this.app.vault.on('create', (file) => this.onFileCreate(file))
         );
@@ -89,9 +95,8 @@ export default class WeeklyNotesPlugin extends Plugin {
         }
     }
 
-    async openWeeklyNote() {
+    async openWeeklyNote(date = moment()) {
         try {
-            const date = moment();
             const filename = date.format(this.settings.dateFormat);
             const folder = this.settings.folder;
             const path = normalizePath(`${folder}/${filename}.md`);
@@ -122,6 +127,11 @@ export default class WeeklyNotesPlugin extends Plugin {
             new Notice(`Failed to open weekly note: ${error}`);
             console.error(error);
         }
+    }
+
+    async openNextWeeklyNote() {
+        const nextWeek = moment().add(1, 'week');
+        await this.openWeeklyNote(nextWeek);
     }
 
     async ensureFolderExists(folder: string) {
