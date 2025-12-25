@@ -11,12 +11,37 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === "production");
 
-const context = await esbuild.context({
+const vaultPluginPath = "/Users/tom/Documents/obsidian/.obsidian/plugins/weekly-notes";
+
+// Plugin to copy files to vault after build
+const copyToVaultPlugin = {
+    name: 'copy-to-vault',
+    setup(build) {
+        build.onEnd(async () => {
+            try {
+                await esbuild.build({
+                    entryPoints: ["main.ts"],
+                    bundle: true,
+                    outfile: `${vaultPluginPath}/main.js`,
+                    ...commonConfig
+                });
+
+                // Copy manifest.json manually
+                const fs = await import('fs/promises');
+                await fs.copyFile('manifest.json', `${vaultPluginPath}/manifest.json`);
+
+                console.log(`\n\x1b[32m[OK]\x1b[0m Copied to ${vaultPluginPath}`);
+            } catch (e) {
+                console.error("Failed to copy to vault:", e);
+            }
+        });
+    },
+};
+
+const commonConfig = {
     banner: {
         js: banner,
     },
-    entryPoints: ["main.ts"],
-    bundle: true,
     external: [
         "obsidian",
         "electron",
@@ -37,7 +62,14 @@ const context = await esbuild.context({
     logLevel: "info",
     sourcemap: prod ? false : "inline",
     treeShaking: true,
+};
+
+const context = await esbuild.context({
+    entryPoints: ["main.ts"],
+    bundle: true,
     outfile: "main.js",
+    plugins: [copyToVaultPlugin], // Add the copy plugin
+    ...commonConfig
 });
 
 if (prod) {

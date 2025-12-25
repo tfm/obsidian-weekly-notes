@@ -24,6 +24,10 @@ export default class WeeklyNotesPlugin extends Plugin {
             this.openWeeklyNote();
         });
 
+        this.registerObsidianProtocolHandler("weekly", (params) => {
+            this.openWeeklyNote();
+        });
+
         this.addCommand({
             id: 'open-weekly-note',
             name: 'Open Weekly Note',
